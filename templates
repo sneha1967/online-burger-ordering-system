@@ -1,0 +1,565 @@
+@@ -0,0 +1,38 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<title>About</title>
+	<link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+</head>
+<body bgcolor="-135deg, #71b7e6, #9b59b6">
+  <nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/menu">Menu</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/service">Service</a></li>
+        <li><a href="/feedback">Feedback</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+  <br><br><br><br><br><br>
+
+
+<h2 style="background-color:#FFFF00" ; class="king"><center>About Us:</center></h2>
+
+<h3>Great Food Comes First</h3>
+<p style="front-family:Roboto;font-size:35px;">Every day, more than 11 million guests visit Burger King restaurants around the world. And they do so because our restaurants are known for serving high-quality, great-tasting, and affordable food. Founded in 1954, Burger King is the second largest fast food hamburger chain in the world. The original Home of the Whopper, our commitment to premium ingredients, signature recipes, and family-friendly dining experiences is what has defined our brand for more than 50 successful years.</p>
+<h3 style="front-family:Roboto;font-size:25px;">Contact</h3>
+<h3 style="front-family:Roboto;font-size:25px;">Burger King Corporation</h3>
+<b style="front-family:Roboto;font-size:25px;">Phone Number: <ul>1-866-394-2493</ul></b>
+</body>
+</html>
+ 114 changes: 114 additions & 0 deletions114  
+Burgersiteproject/Burgerking/templates/cart.html
+@@ -0,0 +1,114 @@
+<!DOCTYPE html>
+{% load static %}
+{% load cart %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cart Page</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/menu">Menu</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="/history">Orders</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+
+        {% endif %}
+      </ul>
+    </div>
+  </nav><br><br><br><br><br><br>
+
+<div class="container">
+    <div class="border rounded p-4 m-4">
+        <h1 >Cart</h1>
+        <table class="table">
+          <thead>
+            <tr>
+                <th>Sno.</th>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for product in products %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td><img style="height: 80px;" class="rounded-circle" src="{{product.image.url}}" alt=""></td>
+                <td>{{product.name}}</td>
+                <td>{{product.price|currency}}</td>
+                <td>{{product|cart_quantity:request.session.cart}}</td>
+                <td>{{product|price_total:request.session.cart|currency}}</td>
+            </tr>
+          {% endfor%}
+          </tbody>
+            <tfoot>
+                <tr>
+                    <th class="text-center" colspan="4">Total</th>
+                    <th>{{products|total_cart_price:request.session.cart|currency}}</th>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="m-3 p-3">
+            <a href="#" data-toggle="modal" data-target="#exampleModalCenter" class="btn btn-outline-info border rounded col-lg-3 float-right">Check Out</a>
+        </div>
+
+    </div>
+</div>
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">CheckOut From Here </h5>
+                  <hr>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="m-2 p-3">
+                    <form action="/check-out" method="post">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="">Address</label>
+                        <input type="text" name="address" id="" class="form-control" placeholder="" aria-describedby="helpId">
+                    </div>
+
+                     <div class="form-group">
+                        <label for="">Phone</label>
+                        <input type="text" name="phone" id="" class="form-control" placeholder="" aria-describedby="helpId">
+                    </div>
+                    <input type="submit" class="btn float-right btn-outline-infocol-lg-6" value="check out">
+                        </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+</body>
+</html>
+ 36 changes: 36 additions & 0 deletions36  
+Burgersiteproject/Burgerking/templates/feedback.html
+@@ -0,0 +1,36 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<title>Feedback</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+</head>
+  <nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/menu">Menu</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/service">Service</a></li>
+        <li><a href="/feedback">Feedback</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav><br><br><br><br><br><br>
+<body bgcolor="gray";>
+<h2 style="background-color:#FFFF00" ;><center>FeedBack:</center></h2>
+<h2>Your Feedback</h2>
+<form action="" method="POST" novalidate>
+  {% csrf_token %}
+   {{form.as_p}}
+  <input type="submit" value="Submit">
+</form>
+
+</body>
+</html>
+ 83 changes: 83 additions & 0 deletions83  
+Burgersiteproject/Burgerking/templates/history.html
+@@ -0,0 +1,83 @@
+<!DOCTYPE html>
+{% load cart %}
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Cart Page</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+</head>
+<body>
+<nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/menu">Menu</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="/cart">Cart</a></li>
+          <li><a href="{% url 'logout' %}">Logout</a></li>
+
+        {% endif %}
+      </ul>
+    </div>
+  </nav><br><br><br><br><br><br>
+
+<div class="container">
+    <div class="border rounded p-4 m-4">
+        <h1 >Order History</h1>
+        <table class="table">
+          <thead>
+            <tr>
+                <th>Sno.</th>
+                <th>Image</th>
+                <th>Product</th>
+                <th>Date</th>
+<!--                <th>Time</th>-->
+                <th>Quantity</th>
+                <th>Price</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for history in historys %}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td><img style="height: 80px;" class="rounded-circle" src="{{history.product.image.url}}" alt=""></td>
+                <td>{{history.product.name}}</td>
+                <td>{{history.date}}</td>
+<!--                <td>{{history.time}}</td>-->
+                <td>{{history.quantity}}</td>
+                <td>{{history.price|currency}}</td>
+                {% if history.status %}
+                <td><small class="badge badge-success">Delivered</small> </td>
+                {% else %}
+                <td><small class="badge badge-warning"> Pending </small></td>
+                {% endif %}
+            </tr>
+          {% endfor%}
+          </tbody>
+
+        </table>
+
+    </div>
+</div>
+
+
+
+
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+
+</body>
+</html>
+ 53 changes: 53 additions & 0 deletions53  
+Burgersiteproject/Burgerking/templates/login.html
+@@ -0,0 +1,53 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Login</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+    <style>
+        .er{
+        color:red;
+        }
+    </style>
+</head>
+<body>
+  <nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/menu">Menu</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/service">Service</a></li>
+        <li><a href="/feedback">Feedback</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav><br><br><br><br><br><br>
+<form action="" method="POST" novalidate>
+    {% csrf_token %}
+    <div class="container">
+    <div class=" col-lg- p-3 m-3 center ">
+
+    {% for fm in form %}
+        {{fm.label_tag}} {{fm}} {{fm.errors|striptags}} <br><br>
+    {% endfor %}
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p class="er">{{error}}</p>
+        {% endfor %}
+    {% endif %}
+    <input type="submit" value="submit">
+        <a href="{% url 'signup' %}">SignUp</a>
+    </div>
+    </div>
+</form>
+
+</body>
+</html>
+ 31 changes: 31 additions & 0 deletions31  
+Burgersiteproject/Burgerking/templates/main.html
+@@ -0,0 +1,31 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,
+initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+   </head>
+<body>
+  <nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/menu">Menu</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/service">Service</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+  <br>
+<img  src="{% static 'image/m1.jpg' %}"  class="k1" />
+</body>
+</html>
+ 89 changes: 89 additions & 0 deletions89  
+Burgersiteproject/Burgerking/templates/menu.html
+@@ -0,0 +1,89 @@
+<!doctype html>
+{% load static %}
+{% load cart %}
+<html lang="en">
+  <head>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>Menu</title>
+  </head>
+  <body>
+  <nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/About">About Us</a></li>
+        <li><a href="/Service">Service</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        <li><a href="/history">Orders</a></li>
+        <li><a href="/cart">Cart</a></li>
+        <span class="badge badge-info">{{request.session.cart.keys|length}}</span>
+
+        {% endif %}
+      </ul>
+    </div>
+  </nav><br><br><br><br><br><br>
+
+<div class="container-fluid">
+  <div class="row mx-auto">
+    {% for product in products %}
+    <div class="card mx-auto mb-3" id={{product.id}} style="width: 18rem;">
+      <img class="card-img-top" src="{{product.image.url}}" alt="Card image cap">
+      <div class="card-body">
+        <p class="card-title">{{product.name}}</p>
+        <p class="card-text"><b>{{product.price}}</b></p>
+<!--        {{product | is_in_cart:request.session.cart }}-->
+      </div>
+
+        <div class="card-footer p-0 no-gutters ">
+          {% if product|is_in_cart:request.session.cart %}
+            <div class="row no-gutters" >
+              <form action="#{{product.id}}" class="col-2" method="post">
+                {% csrf_token %}
+                  <input hidden type="text" name='product' value="{{product.id}}">
+                <input hidden type="text" name='remove' value='True'>
+                <input type="submit" value=" - " class=" btn btn-block btn-secondary">
+              </form>
+                <div class="text-center col">{{product|cart_quantity:request.session.cart}} in cart</div>
+              <form action="#{{product.id}}" class="col-2" method="post">
+                {% csrf_token %}
+                  <input hidden type="text" name='product' value="{{product.id}}">
+                <input type="submit" value=" + " class=" btn btn-block btn-secondary">
+              </form>
+            </div>
+          {% else %}
+          <form action="#{{product.id}}" method="POST" class="btn-block">
+            {% csrf_token %}
+            <input hidden type="text" name='product' value="{{product.id}}">
+            <input type="submit" class="float-right btn btn-light border form-control" value="Add To Cart">
+          </form>
+          {% endif %}
+
+      </div>
+
+
+    </div>
+  {% endfor%}
+  </div>
+
+  </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  </body>
+</html>
+ 51 changes: 51 additions & 0 deletions51  
+Burgersiteproject/Burgerking/templates/service.html
+@@ -0,0 +1,51 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+	<title>Service</title>
+  <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+</head>
+<body>
+  <nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/menu">Menu</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/service">Service</a></li>
+        <li><a href="/feedback">Feedback</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+  <br><br><br><br><br><br>
+<h2 style="background-color:#FFFF00" ;><center>Terms And Conditions:</center></h2><br><br>
+<p>
+<b>March 31, 2019</b>
+
+These Terms of Service (the “Terms”) govern your use of any website, mobile or tablet application, digital in-restaurant kiosk, or other online service or platform of Restaurant Brands International, Inc., or any of its companies, including without limitation the BURGER KING®, the TIM HORTONS® and the POPEYES® restaurant brands (collectively, “RBI”), that provides an authorized link to the Terms (collectively, the “Services”), regardless of who owns or operates the Services or the restaurant you ultimately visit, as well as our interactions with you on third party platforms.
+</p><br>
+<h4>1. BINDING AGREEMENT</h4>
+  <p>
+The Terms are a binding legal contract between you and RBI. Please read the Terms carefully before using the Services. Your use of the Services means that you agree to be bound by the Terms. Do not use the Services if you do not accept the Terms.
+
+We may modify the Terms at any time. Your use of the Services after we post modifications to the Terms means that you accept the modified Terms. You must be 13 years or older to use the Services.
+
+EXCEPT WHERE PROHIBITED BY APPLICABLE LAW, WHICH MAY INCLUDE THE PROVINCE OF QUEBEC, THESE TERMS CONTAIN DISCLAIMERS OF WARRANTIES (SECTION 12), DISCLAIMERS OF LIABILITY AND AN EXCLUSIVE REMEDY (SECTION 13), AND A BINDING ARBITRATION CLAUSE AND CLASS ACTION WAIVER (SECTION 18). PLEASE READ THEM CAREFULLY.
+  </p><br>
+<h4>2. PRIVACY</h4>
+  <p>
+By using the Services, you acknowledge that you have reviewed and understand our Privacy Policy, and consent to the practices described in that policy.
+  </p><br>
+<h4>3. REGISTRATION AND SECURITY</h4>
+  <p>
+You may register for certain activities provided through the Services. When you register or provide any other information in connection with the Services, you agree to provide accurate, current, and complete information and to promptly update this information to maintain its accuracy. You are responsible for maintaining the confidentiality of any password and username that you are given or select, and you are responsible for all activities that occur under your password or account. RBI has the right to suspend or terminate any account or other registration if it suspects that such information is inaccurate or incomplete. You agree to immediately notify RBI of any unauthorized use of your password or username or any other breach of security.
+  </p><br>
+</body>
+</html>
+ 45 changes: 45 additions & 0 deletions45  
+Burgersiteproject/Burgerking/templates/signup.html
+@@ -0,0 +1,45 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title> SignUP </title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}"/>
+</head>
+<body>
+  <nav>
+    <div class="menu">
+      <div class="logo">
+        <a href="#">Burger KING</a>
+      </div>
+      <ul>
+        <li><a href="/menu">Menu</a></li>
+        <li><a href="/about">About Us</a></li>
+        <li><a href="/service">Service</a></li>
+        <li><a href="/feedback">Feedback</a></li>
+        {% if not request.user.is_authenticated %}
+        <li><a href="{% url 'login' %}">Login</a></li>
+        {% else %}
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav><br><br><br><br><br><br>
+
+<form action="" method="POST" novalidate>
+    {% csrf_token %}
+    <div class="container">
+    <div class="border rounded col-lg-7 p-3 m-3 center ">
+    {% for fm in form %}
+    {{fm.label_tag}} {{fm}} {{fm.errors|striptags}} <br><br>
+    {% endfor %}
+    <input type="submit" value="submit">
+        <a href="{% url 'login' %}">Login</a>
+    </div>
+    </div>
+</form>
+
+
+</body>
+</html>
